@@ -1,0 +1,45 @@
+{
+	"name": "pl_tsv_2_parquet",
+	"properties": {
+		"activities": [
+			{
+				"name": "raw2clensed",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_textfilevinay",
+						"type": "DatasetReference",
+						"parameters": {
+							"Directory": "NA",
+							"FileName": "Seattle_Pet_Licenses.tsv"
+						}
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
