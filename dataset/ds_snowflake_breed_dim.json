@@ -1,0 +1,16 @@
+{
+	"name": "ds_snowflake_breed_dim",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_snowflake_demo1_vinay",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SnowflakeV2Table",
+		"schema": [],
+		"typeProperties": {
+			"schema": "PUBLIC",
+			"table": "BREED_DIM"
+		}
+	}
+}

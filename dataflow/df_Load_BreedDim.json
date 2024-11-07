@@ -1,0 +1,108 @@
+{
+	"name": "df_Load_BreedDim",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_snowflakevinay_stage_spl",
+						"type": "DatasetReference"
+					},
+					"name": "sourceStg"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_snowflake_breed_dim",
+						"type": "DatasetReference"
+					},
+					"name": "sourceBreedDim"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_snowflake_breed_dim",
+						"type": "DatasetReference"
+					},
+					"name": "sinkbreeddim"
+				}
+			],
+			"transformations": [
+				{
+					"name": "sourcedatawithsk"
+				},
+				{
+					"name": "aggregatebreedkeys"
+				},
+				{
+					"name": "surrogateKey1"
+				},
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     DI_JOB_ID as string (\"59\")",
+				"}",
+				"source(output(",
+				"          LICENSE_ISSUE_DATE as string,",
+				"          LICENSE_NUMBER as string,",
+				"          ANIMAL_NAME as string,",
+				"          SPECIES as string,",
+				"          PRIMARY_BREED as string,",
+				"          SECONDARY_BREED as string,",
+				"          ZIP_CODE as string,",
+				"          DI_CREATED_DATE as timestamp,",
+				"          DI_JOB_ID as string",
+				"     ),",
+				"     allowSchemaDrift: false,",
+				"     validateSchema: false,",
+				"     limit: 100,",
+				"     format: 'table') ~> sourceStg",
+				"source(output(",
+				"          MAXBREEDSK as decimal(10,0)",
+				"     ),",
+				"     allowSchemaDrift: false,",
+				"     validateSchema: false,",
+				"     query: 'SELECT NVL(MAX(BREED_SK),0) as MaxBreedSK FROM PUBLIC.BREED_DIM',",
+				"     format: 'query') ~> sourceBreedDim",
+				"sourceStg, sourceBreedDim join(1==1,",
+				"     joinType:'cross',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> sourcedatawithsk",
+				"sourcedatawithsk aggregate(groupBy(SPECIES,",
+				"          PRIMARY_BREED,",
+				"          SECONDARY_BREED,",
+				"          MAXBREEDSK),",
+				"     COUNT_ROW = count(LICENSE_NUMBER)) ~> aggregatebreedkeys",
+				"aggregatebreedkeys keyGenerate(output(RowNum as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"surrogateKey1 derive(BREED_SK = MAXBREEDSK + RowNum,",
+				"          DI_CREATED_DT = toString(currentDate(),'yyyy-MM-dd'),",
+				"          DI_JOB_ID = $DI_JOB_ID) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          SPECIES,",
+				"          PRIMARY_BREED,",
+				"          SECONDARY_BREED,",
+				"          BREED_SK,",
+				"          DI_CREATED_DT,",
+				"          DI_JOB_ID",
+				"     )) ~> sinkbreeddim"
+			]
+		}
+	}
+}
