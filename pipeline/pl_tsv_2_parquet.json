@@ -167,11 +167,17 @@
 						"additionalColumns": [
 							{
 								"name": "DI_JOB_ID",
-								"value": "$$FILEPATH"
+								"value": {
+									"value": "@pipeline().parameters.JobID",
+									"type": "Expression"
+								}
 							},
 							{
 								"name": "DI_CREATED_DT",
-								"value": "$$FILEPATH"
+								"value": {
+									"value": "@utcNow()",
+									"type": "Expression"
+								}
 							}
 						],
 						"storeSettings": {
@@ -264,12 +270,20 @@
 								}
 							},
 							{
+								"source": {
+									"name": "DI_CREATED_DT",
+									"type": "String"
+								},
 								"sink": {
 									"name": "DI_CREATED_DATE",
 									"type": "DateTime"
 								}
 							},
 							{
+								"source": {
+									"name": "DI_JOB_ID",
+									"type": "String"
+								},
 								"sink": {
 									"name": "DI_JOB_ID",
 									"type": "String"
