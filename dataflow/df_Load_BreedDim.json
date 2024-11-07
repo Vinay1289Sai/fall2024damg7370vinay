@@ -95,7 +95,7 @@
 				"     skipDuplicateMapOutputs: true,",
 				"     stageInsert: true,",
 				"     mapColumn(",
-				"          SPECIES,",
+				"          SPECIES_NAME = SPECIES,",
 				"          PRIMARY_BREED,",
 				"          SECONDARY_BREED,",
 				"          BREED_SK,",
