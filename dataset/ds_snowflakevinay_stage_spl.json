@@ -5,6 +5,15 @@
 			"referenceName": "ls_snowflake_demo1_vinay",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"sname": {
+				"type": "string",
+				"defaultValue": "json"
+			},
+			"tname": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "SnowflakeV2Table",
 		"schema": [
@@ -46,8 +55,14 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "PUBLIC",
-			"table": "SEATTLEPETLICENSES"
+			"schema": {
+				"value": "@dataset().sname",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().tname",
+				"type": "Expression"
+			}
 		}
 	}
 }
