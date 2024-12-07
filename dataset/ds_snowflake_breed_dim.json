@@ -37,7 +37,7 @@
 		],
 		"typeProperties": {
 			"schema": "PUBLIC",
-			"table": "BREED_DIM"
+			"table": "ACTOR"
 		}
 	}
 }
